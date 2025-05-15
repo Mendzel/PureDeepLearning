@@ -9,9 +9,9 @@ class Action(object):  # Moze bedzie lepiej nazwa Operation
         self.y = None
         self.X = None
 
-    def forward(self, X: ndarray):
+    def forward(self, X: ndarray, inference: bool = False):
         self.X = X
-        self.y = self.get_output()
+        self.y = self.get_output(inference=inference)
         return self.y
 
     def backward(self, y_gradient: ndarray) -> ndarray:
@@ -20,7 +20,7 @@ class Action(object):  # Moze bedzie lepiej nazwa Operation
         assert_same_shape(self.X, self.X_gradient)
         return self.X_gradient
 
-    def get_output(self) -> ndarray:
+    def get_output(self, **kwargs) -> ndarray:
         raise NotImplementedError
 
     def get_input_gradient(self, y_gradient: ndarray) -> ndarray:

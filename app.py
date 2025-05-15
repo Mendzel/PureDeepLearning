@@ -43,16 +43,17 @@ dl = NeuralNetwork(
     layers=[Dense(neurons=13,
                    activation=Sigmoid()),
             Dense(neurons=13,
-                   activation=Sigmoid()),
+                  activation=Sigmoid(),
+                  dropout=0.9),
             Dense(neurons=1,
                    activation=Linear())],
     loss=MeanSquaredError(),
     seed=20190501
 )
 
-trainer = Trainer(dl, SGDMomentum(lr=0.01))
+trainer = Trainer(dl, SGDMomentum(lr=0.01, momentum=0.85, final_lr=0.005, decay_type='linear'))
 trainer.fit(X_train, y_train, X_test, y_test,
-       epochs = 50,
+       epochs = 100,
        eval_every = 10,
        seed=20190501)
 eval_regression_model(dl, X_test, y_test)

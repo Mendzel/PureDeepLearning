@@ -17,10 +17,10 @@ class NeuralNetwork(object):
             for layer in self.layers:
                 setattr(layer, 'seed', self.seed)
 
-    def forward(self, x_batch: ndarray) -> ndarray:
+    def forward(self, x_batch: ndarray, inference: bool = False) -> ndarray:
         x_out = x_batch
         for layer in self.layers:
-            x_out = layer.forward(x_out)
+            x_out = layer.forward(x_out, inference)
 
         return x_out
 
@@ -68,6 +68,8 @@ class Trainer(object):
             X_test: ndarray, y_test:ndarray, epochs, eval_every:int=10,
             batch_size:int=32, seed:int=1, restart:bool=True) -> None:
         np.random.seed(seed)
+        setattr(self.optimizer, "max_epochs", epochs)
+        self.optimizer.setup_decay()
 
         if restart:
             for layer in self.net.layers:
@@ -87,7 +89,7 @@ class Trainer(object):
                 self.optimizer.step()
 
             if (e+1) % eval_every == 0:
-                test_preds = self.net.forward(X_test)
+                test_preds = self.net.forward(X_test, inference=True)
                 loss = self.net.loss.forward(test_preds, y_test)
 
                 if loss < self.best_loss:
@@ -99,3 +101,6 @@ class Trainer(object):
                     self.net = last_model
                     setattr(self.optimizer, 'net', self.net)
                     break
+
+            if self.optimizer.final_lr:
+                self.optimizer.decay_lr()

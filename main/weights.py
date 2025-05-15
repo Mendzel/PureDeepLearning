@@ -7,7 +7,7 @@ class WeightMultiply(ParametersAction):
     def __init__(self, W: ndarray):
         super().__init__(W)
 
-    def get_output(self) -> ndarray:
+    def get_output(self, **kwargs) -> ndarray:
         return self.X @ self.param
 
     def get_input_gradient(self, y_gradient: ndarray) -> ndarray:
@@ -21,7 +21,7 @@ class BiasAdd(ParametersAction):
         assert B.shape[0] == 1
         super().__init__(B)
 
-    def get_output(self) -> ndarray:
+    def get_output(self, **kwargs) -> ndarray:
         return self.X + self.param
 
     def get_input_gradient(self, y_gradient: ndarray) -> ndarray:
